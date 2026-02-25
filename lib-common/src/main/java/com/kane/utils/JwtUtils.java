@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kane.enums.ErrorType;
 import com.kane.enums.TokenType;
-import com.kane.enums.UserStatus;
 import com.kane.exception.BusinessException;
 import com.kane.entity.vo.AuthorizationVO;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,7 @@ public class JwtUtils {
 
     public static final String JWT_SECRET = "kittyrun-system-secret";
 
-    public static final long ACCESS_JWT_EXPIRE = 1000 * 60 * 30;
+    public static final long ACCESS_JWT_EXPIRE = 1000;// * 60 * 30;
 
     public static final long REFRESH_JWT_EXPIRE = 1000 * 60 * 60 * 24 * 7;
 
@@ -96,14 +95,38 @@ public class JwtUtils {
     public static boolean verify(String token) {
         //判断token是否为空或为空串
         if (token == null || token.isEmpty())
-            throw new BusinessException(ErrorType.USER_NOT_LOGIN);
+            return false;
         //判断token是否正确
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET)).build();
         try {
             DecodedJWT jwt = verifier.verify(token);
         } catch (Exception e) {
-            throw new BusinessException(ErrorType.USER_NOT_LOGIN);
+            return  false;
         }
         return true;
     }
+
+    /**
+     * 验证JWT令牌是否过期
+     *
+     * @param token JWT令牌字符串
+     * @return true表示已过期，false表示未过期
+     */
+    public static boolean isTokenExpired(String token) {
+        if (token == null || token.isEmpty()) {
+            return true;
+        }
+        try {
+            DecodedJWT jwt = JWT.decode(token);
+            Date expiresAt = jwt.getExpiresAt();
+            if (expiresAt == null) {
+                return true;
+            }
+            return expiresAt.before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+
 }
