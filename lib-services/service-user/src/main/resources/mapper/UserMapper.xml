@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kane.mapper.UserMapper">
+    <sql id="baseQuery">
+        user_id
+        ,phone,email,password,salt,open_id,user_type,status,create_time,update_time
+    </sql>
+
+
+    <select id="selectByPhone" resultType="com.kane.entity.po.User">
+        select user_id, phone, password, salt, user_type, status
+        from t_user
+        where phone = #{phone}
+    </select>
+</mapper>

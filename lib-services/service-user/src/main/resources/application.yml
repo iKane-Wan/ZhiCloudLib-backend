@@ -7,5 +7,18 @@ spring:
         server-addr: 192.168.0.3:8848
         username: nacos
         password: nacos
+  data:
+    redis:
+      host: 192.168.0.3
+      port: 6379
+      password: Wan021220
+      database: 0
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.0.3:3306/library
+    username: root
+    password: 'Won021220'
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
 server:
   port: 7000
