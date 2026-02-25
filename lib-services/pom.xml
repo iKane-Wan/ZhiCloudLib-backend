@@ -10,6 +10,7 @@
     </parent>
     <packaging>pom</packaging>
     <modules>
+        <module>service-user</module>
     </modules>
 
     <artifactId>lib-services</artifactId>
