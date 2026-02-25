@@ -19,7 +19,7 @@ public class AuthController {
      * @return Jwt token
      */
     @PostMapping("/accountLogin")
-    public R<CredentialsVO> accountLogin(@RequestBody @Validated AccountAuthDTO accountAuthDTO, @RequestHeader("User-Device") String device) {
-        return R.success(userService.accountLogin(accountAuthDTO, device));
+    public R<CredentialsVO> accountLogin(@RequestBody @Validated AccountAuthDTO accountAuthDTO) {
+        return R.success(userService.accountLogin(accountAuthDTO));
     }
 }

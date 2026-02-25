@@ -10,5 +10,5 @@ public interface UserService extends IService<User> {
      * 账号密码登录
      * @return Jwt token
      */
-    CredentialsVO accountLogin(AccountAuthDTO accountAuthDTO, String device);
+    CredentialsVO accountLogin(AccountAuthDTO accountAuthDTO);
 }

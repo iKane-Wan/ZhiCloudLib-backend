@@ -17,7 +17,7 @@ import org.springframework.util.DigestUtils;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Override
-    public CredentialsVO accountLogin(AccountAuthDTO accountAuthDTO, String device) {
+    public CredentialsVO accountLogin(AccountAuthDTO accountAuthDTO) {
         // 根据手机号查询用户信息
         User user = baseMapper.selectByPhone(accountAuthDTO.getPhone());
         if (user == null)
