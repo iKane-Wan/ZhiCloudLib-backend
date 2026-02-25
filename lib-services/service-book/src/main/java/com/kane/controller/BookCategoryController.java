@@ -14,7 +14,7 @@ import java.util.List;
  * 处理图书分类相关的HTTP请求
  */
 @RestController
-@RequestMapping("/api/book-category")
+@RequestMapping("/api/book/category")
 public class BookCategoryController {
 
     @Resource
