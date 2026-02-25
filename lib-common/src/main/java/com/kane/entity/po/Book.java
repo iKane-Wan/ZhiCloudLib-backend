@@ -1,11 +1,12 @@
 package com.kane.entity.po;
 
+
+import lombok.Data;
+
 import java.io.Serializable;
 
 import java.util.Date;
 import java.math.BigDecimal;
-
-import lombok.Data;
 
 /**
 * 图书表

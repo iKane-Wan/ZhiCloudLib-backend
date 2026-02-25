@@ -5,17 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.kane</groupId>
-        <artifactId>ZhiCloudLib-backend</artifactId>
+        <artifactId>lib-services</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <packaging>pom</packaging>
-    <modules>
-        <module>service-user</module>
-        <module>service-ai</module>
-        <module>service-book</module>
-    </modules>
 
-    <artifactId>lib-services</artifactId>
+    <artifactId>service-book</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -24,17 +18,15 @@
     </properties>
 
     <dependencies>
-        <!-- Nacos服务注册发现依赖 -->
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.kane</groupId>
-            <artifactId>lib-common</artifactId>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
         </dependency>
-
     </dependencies>
 
 </project>
