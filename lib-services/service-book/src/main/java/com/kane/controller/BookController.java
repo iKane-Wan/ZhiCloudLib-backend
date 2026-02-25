@@ -22,13 +22,13 @@ public class BookController {
      * @return R
      */
     @PostMapping
-    @Authorization
+    @Authorization(role = 1)
     public R<String> addBook(@RequestBody BookDTO bookDTO){
         bookService.addBook(bookDTO);
         return R.success("添加成功");
     }
 
-    @Authorization
+    @Authorization(role = 1)
     @DeleteMapping("/{id}")
     public R<String> deleteBook(@PathVariable Long id){
         bookService.removeById(id);
@@ -36,14 +36,13 @@ public class BookController {
     }
 
     @PutMapping
-    @Authorization
+    @Authorization(role = 1)
     public R<String> updateBook(@RequestBody BookDTO bookDTO){
         bookService.updateBook(bookDTO);
         return R.success("更新成功");
     }
 
     @GetMapping
-    @Authorization
     public R<PaginationVO<BookDTO>> listBook(@RequestBody PaginationDTO dto){
         PaginationVO<BookDTO> bookDTOPaginationVO = bookService.listBook(dto);
         return R.success(bookDTOPaginationVO);
