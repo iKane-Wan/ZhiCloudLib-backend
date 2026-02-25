@@ -26,6 +26,7 @@
         <jwt.version>4.4.0</jwt.version>
         <redis.version>3.5.0</redis.version>
         <mysql.version>8.0.30</mysql.version>
+        <dashscope.version>2.22.9</dashscope.version>
         <mybatis-plus.version>3.5.9</mybatis-plus.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -90,6 +91,13 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>dashscope-sdk-java</artifactId>
+                <version>${dashscope.version}</version>
+                <scope>compile</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
