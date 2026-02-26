@@ -6,10 +6,17 @@ import com.kane.entity.vo.CredentialsVO;
 import com.kane.enums.ErrorType;
 import com.kane.exception.BusinessException;
 import com.kane.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 认证控制器
+ * 处理用户认证相关的HTTP请求
+ */
+@Tag(name = "用户认证", description = "用户认证相关接口")
 @RestController
 @RequestMapping("/api/user/auth")
 public class AuthController {
@@ -19,13 +26,20 @@ public class AuthController {
 
     /**
      * 账号密码登录
+     * @param accountAuthDTO 账号认证数据传输对象
      * @return Jwt token
      */
+    @Operation(summary = "账号密码登录", description = "使用手机号和密码进行登录")
     @PostMapping("/accountLogin")
     public R<CredentialsVO> accountLogin(@RequestBody @Validated AccountAuthDTO accountAuthDTO) {
         return R.success(userService.accountLogin(accountAuthDTO));
     }
 
+    /**
+     * 测试接口
+     * @return R
+     */
+    @Operation(summary = "测试接口", description = "测试认证功能")
     @GetMapping("/hello")
     @Authorization
     public R<String> hello() {
