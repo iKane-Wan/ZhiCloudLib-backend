@@ -13,6 +13,7 @@
         <module>service-user</module>
         <module>service-ai</module>
         <module>service-book</module>
+        <module>service-notify</module>
     </modules>
 
     <artifactId>lib-services</artifactId>
