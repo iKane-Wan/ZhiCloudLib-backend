@@ -9,6 +9,7 @@ import com.kane.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "用户认证", description = "用户认证相关接口")
 @RestController
+@Validated
 @RequestMapping("/api/user/auth")
 public class AuthController {
 
@@ -33,5 +35,19 @@ public class AuthController {
     @PostMapping("/accountLogin")
     public R<CredentialsVO> accountLogin(@RequestBody @Validated AccountAuthDTO accountAuthDTO) {
         return R.success(userService.accountLogin(accountAuthDTO));
+    }
+
+    @PostMapping("/phoneLogin/{phone}")
+    public R<CredentialsVO> phoneLogin(@PathVariable @Pattern(regexp = "^1[3-9]\\d{8}$", message = "手机号格式错误") String phone,
+                                       @RequestParam("code") String  code) {
+        return R.success(userService.phoneLogin(phone, code));
+    }
+
+
+
+    @GetMapping("/phone/code")
+    public R<String> getPhoneCode(@RequestParam @Pattern(regexp = "^1[3-9]\\d{8}$", message = "手机号格式错误") String phone) {
+        userService.getPhoneCode(phone);
+        return R.success();
     }
 }
