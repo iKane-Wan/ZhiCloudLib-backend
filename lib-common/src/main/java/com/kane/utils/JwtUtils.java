@@ -24,7 +24,7 @@ public class JwtUtils {
 
     public static final String JWT_SECRET = "kittyrun-system-secret";
 
-    public static final long ACCESS_JWT_EXPIRE = 1000;// * 60 * 30;
+    public static final long ACCESS_JWT_EXPIRE = 1000 * 60 * 30;
 
     public static final long REFRESH_JWT_EXPIRE = 1000 * 60 * 60 * 24 * 7;
 

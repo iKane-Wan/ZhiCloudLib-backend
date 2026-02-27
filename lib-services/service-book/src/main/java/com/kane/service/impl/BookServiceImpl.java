@@ -4,6 +4,9 @@ import com.alibaba.cloud.commons.lang.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kane.config.RabbitMQConfig;
+import com.kane.entity.bo.BookBO;
+import com.kane.entity.bo.BookIntroductionBO;
 import com.kane.entity.dto.BookDTO;
 import com.kane.entity.dto.PaginationDTO;
 import com.kane.entity.po.Book;
@@ -11,16 +14,25 @@ import com.kane.entity.vo.PaginationVO;
 import com.kane.mapper.BookMapper;
 import com.kane.service.BookService;
 import com.kane.utils.BeanUtils;
+import jakarta.annotation.Resource;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements BookService {
+
+    @Resource
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public void addBook(BookDTO bookDTO) {
         Book book = BeanUtils.copyProperties(bookDTO, Book.class);
         book.setIntroduction("");
         baseMapper.insert(book);
+        BookBO bookBO = BeanUtils.copyProperties(book, BookBO.class);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY, bookBO);
     }
 
     @Override
@@ -64,5 +76,10 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
             paginationVO.getData().add(bookDTO);
         });
         return paginationVO;
+    }
+
+    @Override
+    public void updateBookIntroduction(BookIntroductionBO bo) {
+        baseMapper.updateBookIntroductionByID(bo.getBookId(), bo.getIntroduction());
     }
 }

@@ -1,5 +1,6 @@
 package com.kane.entity.po;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import lombok.Data;
 */
 @Schema(description = "借阅记录实体")
 @Data
+@TableName("t_borrow_record")
 public class BorrowRecord implements Serializable {
 
     /**

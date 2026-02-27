@@ -1,6 +1,9 @@
 package com.kane.entity.po;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -15,11 +18,13 @@ import java.math.BigDecimal;
 */
 @Schema(description = "图书实体")
 @Data
+@TableName("t_book")
 public class Book implements Serializable {
 
     /**
     * 图书唯一标识（主键）
     */
+    @TableId(type = IdType.AUTO)
     @Schema(description = "图书唯一标识（主键）")
     private Long bookId;
     /**

@@ -9,6 +9,12 @@ spring:
         server-addr: 192.168.0.3:8848
         username: nacos
         password: nacos
+  rabbitmq:
+      host: 192.168.0.3
+      port: 5672
+      username: kane
+      password: Won021220
+      virtual-host: /library
 server:
   port: 7010
 

@@ -20,9 +20,9 @@ import java.util.Arrays;
 public class AiUtils {
 
     @Value("${alibaba.bigModel.api-key}")
-    private static String apiKey;
+    private String apiKey;
 
-    private static GenerationResult callWithMessage(String text) throws ApiException, NoApiKeyException, InputRequiredException {
+    private GenerationResult callWithMessage(String text) throws ApiException, NoApiKeyException, InputRequiredException {
         Generation gen = new Generation();
         Message systemMsg = Message.builder()
                 .role(Role.SYSTEM.getValue())
@@ -43,7 +43,7 @@ public class AiUtils {
         return gen.call(param);
     }
 
-    public static String callWithText(BookBO bo) {
+    public String callWithText(BookBO bo) {
         StringBuilder sb = new StringBuilder();
         String prompt = sb.append("Could you please help me write a brief introduction to a book titled ")
                 .append(bo.getBookName())
@@ -58,7 +58,7 @@ public class AiUtils {
                 .append(".You only need to generate a brief introduction to this book, without generating any other words.")
                 .toString();
         try {
-            GenerationResult result = AiUtils.callWithMessage(prompt);
+            GenerationResult result = callWithMessage(prompt);
             return result.getOutput().getChoices().getFirst().getMessage().getContent();
         } catch (ApiException | NoApiKeyException | InputRequiredException e) {
             // 使用日志框架记录异常信息

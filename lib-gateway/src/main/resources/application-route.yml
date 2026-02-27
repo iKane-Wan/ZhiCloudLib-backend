@@ -10,3 +10,7 @@ spring:
           uri: lb://service-ai
           predicates:
             - Path=/api/ai/**
+        - id: service-book
+          uri: lb://service-book
+          predicates:
+            - Path=/api/book/**

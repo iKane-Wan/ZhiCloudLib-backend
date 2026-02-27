@@ -1,5 +1,6 @@
 package com.kane.entity.po;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 
@@ -12,6 +13,7 @@ import lombok.Data;
 */
 @Schema(description = "图书分类实体")
 @Data
+@TableName("t_book_category")
 public class BookCategory implements Serializable {
 
     /**

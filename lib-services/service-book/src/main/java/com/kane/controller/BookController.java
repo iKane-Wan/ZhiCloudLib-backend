@@ -3,6 +3,7 @@ package com.kane.controller;
 
 import com.kane.R;
 import com.kane.annotation.Authorization;
+import com.kane.entity.bo.BookIntroductionBO;
 import com.kane.entity.dto.BookDTO;
 import com.kane.entity.dto.PaginationDTO;
 import com.kane.entity.vo.PaginationVO;
@@ -89,4 +90,14 @@ public class BookController {
         return R.success(bookDTO);
     }
 
+    /**
+     * 更新图书简介,内部接口不对外暴露
+     * @param bo 图书简介数据传输对象
+     * @return R
+     */
+    @PostMapping("/introduction")
+    public R<String> updateBookIntroduction(@RequestBody  BookIntroductionBO bo){
+        bookService.updateBookIntroduction(bo);
+        return R.success("更新成功");
+    }
 }
