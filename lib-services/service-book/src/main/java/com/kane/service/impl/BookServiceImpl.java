@@ -14,17 +14,22 @@ import com.kane.entity.vo.PaginationVO;
 import com.kane.mapper.BookMapper;
 import com.kane.service.BookService;
 import com.kane.utils.BeanUtils;
+import com.kane.utils.RedisUtils;
 import jakarta.annotation.Resource;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements BookService {
 
     @Resource
     private RabbitTemplate rabbitTemplate;
+
+    @Resource
+    private RedisUtils redisUtils;
 
     @Override
     public void addBook(BookDTO bookDTO) {
@@ -33,12 +38,20 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         baseMapper.insert(book);
         BookBO bookBO = BeanUtils.copyProperties(book, BookBO.class);
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY, bookBO);
+        Set<String> keys = redisUtils.keys("library:book_*");
+        for (String key : keys) {
+            redisUtils.del(key);
+        }
     }
 
     @Override
     public void updateBook(BookDTO bookDTO) {
         Book book = BeanUtils.copyProperties(bookDTO, Book.class);
         baseMapper.updateById(book);
+        Set<String> keys = redisUtils.keys("library:book_*");
+        for (String key : keys) {
+            redisUtils.del(key);
+        }
     }
 
     @Override
@@ -49,6 +62,9 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     @Override
     public PaginationVO<BookDTO> listBook(PaginationDTO vo) {
+        if (redisUtils.hasKey("library:book_" + vo.getPageNow())) {
+            return (PaginationVO<BookDTO>) redisUtils.get("library:book_" + vo.getPageNow());
+        }
         // 创建分页对象，设置当前页和每页大小
         Page<Book> page = new Page<>(vo.getPageNow(), vo.getPageSize());
 
@@ -75,6 +91,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
             BookDTO bookDTO = BeanUtils.copyProperties(book, BookDTO.class);
             paginationVO.getData().add(bookDTO);
         });
+        redisUtils.set("library:book_" + vo.getPageNow(), paginationVO);
         return paginationVO;
     }
 
