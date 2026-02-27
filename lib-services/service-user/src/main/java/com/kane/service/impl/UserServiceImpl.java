@@ -3,7 +3,7 @@ package com.kane.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kane.config.RabbitMQConfig;
 import com.kane.entity.bo.MessageBO;
-import com.kane.entity.bo.SmsBO;
+import com.kane.entity.bo.CodeBO;
 import com.kane.entity.dto.AccountAuthDTO;
 import com.kane.entity.dto.UserAddDTO;
 import com.kane.entity.po.User;
@@ -20,10 +20,10 @@ import com.kane.utils.RandomUtils;
 import com.kane.utils.RedisUtils;
 import jakarta.annotation.Resource;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -32,8 +32,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private RabbitTemplate rabbitTemplate;
 
     @Resource
-    private RedisUtils redisTemplate;
-    @Autowired
     private RedisUtils redisUtils;
 
     @Override
@@ -65,13 +63,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void getPhoneCode(String phone) {
         String code = RandomUtils.getRandomNumber();
-        redisUtils.set("library:phone:code:"+phone, code);
+        redisUtils.setx("library:phone:code:"+phone, code,5, TimeUnit.MINUTES);
         MessageBO messageBO = new MessageBO();
         messageBO.setType(NotifyType.SMS);
-        SmsBO smsBO = new SmsBO();
-        smsBO.setMobile(phone);
+        CodeBO smsBO = new CodeBO();
+        smsBO.setAccount(phone);
         smsBO.setCode(code);
-        messageBO.setObj(smsBO);
+        messageBO.setBo(smsBO);
         rabbitTemplate.convertAndSend(RabbitMQConfig.QUEUE_NAME, messageBO);
     }
 
@@ -94,15 +92,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 }
                 // 用户存在，将用户信息复制到授权对象
                 AuthorizationVO authorizationVO = BeanUtils.copyProperties(user, AuthorizationVO.class);
+                redisUtils.del("library:phone:code:" + phone);
                 // 生成访问令牌和刷新令牌并返回
                 return new CredentialsVO()
                         .setAccessToken(JwtUtils.generateToken(authorizationVO, TokenType.ACCESS_TOKEN))
                         .setRefreshToken(JwtUtils.generateToken(authorizationVO, TokenType.REFRESH_TOKEN));
             } else {
+                redisUtils.del("library:phone:code:" + phone);
                 // 验证码不匹配，抛出异常
                 throw new BusinessException(400, "验证码错误");
             }
         } else {
+            redisUtils.del("library:phone:code:" + phone);
             // 验证码不存在或已过期，抛出异常
             throw new BusinessException(400, "验证码已过期");
         }

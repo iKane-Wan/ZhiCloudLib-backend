@@ -36,17 +36,25 @@ public class AuthController {
     public R<CredentialsVO> accountLogin(@RequestBody @Validated AccountAuthDTO accountAuthDTO) {
         return R.success(userService.accountLogin(accountAuthDTO));
     }
-
+    /**
+     * 手机验证码登录
+     * @param phone 手机号，必须符合中国大陆手机号格式
+     * @param code 验证码
+     * @return Jwt token
+     */
     @PostMapping("/phoneLogin/{phone}")
-    public R<CredentialsVO> phoneLogin(@PathVariable @Pattern(regexp = "^1[3-9]\\d{8}$", message = "手机号格式错误") String phone,
+    public R<CredentialsVO> phoneLogin(@PathVariable @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误") String phone,
                                        @RequestParam("code") String  code) {
         return R.success(userService.phoneLogin(phone, code));
     }
-
-
-
+    
+    /**
+     * 获取手机验证码
+     * @param phone 手机号，必须符合中国大陆手机号格式
+     * @return 成功响应
+     */
     @GetMapping("/phone/code")
-    public R<String> getPhoneCode(@RequestParam @Pattern(regexp = "^1[3-9]\\d{8}$", message = "手机号格式错误") String phone) {
+    public R<String> getPhoneCode(@RequestParam @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误") String phone) {
         userService.getPhoneCode(phone);
         return R.success();
     }

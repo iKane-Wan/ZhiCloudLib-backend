@@ -11,13 +11,19 @@ spring:
     redis:
       host: 192.168.0.3
       port: 6379
-      password: Wan021220
+      password: Won021220
       database: 0
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.0.3:3306/library
     username: root
     password: 'Won021220'
+  rabbitmq:
+    host: 192.168.0.3
+    port: 5672
+    username: kane
+    password: Won021220
+    virtual-host: /library
 mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml
 server:
