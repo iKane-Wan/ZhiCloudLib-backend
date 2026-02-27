@@ -34,16 +34,4 @@ public class AuthController {
     public R<CredentialsVO> accountLogin(@RequestBody @Validated AccountAuthDTO accountAuthDTO) {
         return R.success(userService.accountLogin(accountAuthDTO));
     }
-
-    /**
-     * 测试接口
-     * @return R
-     */
-    @Operation(summary = "测试接口", description = "测试认证功能")
-    @GetMapping("/hello")
-    @Authorization
-    public R<String> hello() {
-        throw new BusinessException(55255,"asdasddfas");
-//        return R.success("hello");
-    }
 }

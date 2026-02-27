@@ -2,6 +2,7 @@ package com.kane.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kane.entity.dto.AccountAuthDTO;
+import com.kane.entity.dto.UserAddDTO;
 import com.kane.entity.po.User;
 import com.kane.entity.vo.AuthorizationVO;
 import com.kane.entity.vo.CredentialsVO;
@@ -11,6 +12,7 @@ import com.kane.mapper.UserMapper;
 import com.kane.service.UserService;
 import com.kane.utils.BeanUtils;
 import com.kane.utils.JwtUtils;
+import com.kane.utils.RandomUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -33,5 +35,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return  new CredentialsVO()
                 .setAccessToken(JwtUtils.generateToken(authorizationVO, TokenType.ACCESS_TOKEN))
                 .setRefreshToken(JwtUtils.generateToken(authorizationVO, TokenType.REFRESH_TOKEN));
+    }
+
+    @Override
+    public void addUser(UserAddDTO userAddDTO) {
+        User user = BeanUtils.copyProperties(userAddDTO, User.class);
+        user.setSalt(RandomUtils.getRandomString(6));
+        user.setPassword(DigestUtils.md5DigestAsHex((user.getPassword()+user.getSalt()).getBytes()));
+        baseMapper.insert(user);
     }
 }
