@@ -19,6 +19,7 @@ import jakarta.annotation.Resource;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -63,7 +64,19 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
     @Override
     public PaginationVO<BookDTO> listBook(PaginationDTO vo) {
         if (redisUtils.hasKey("library:book_" + vo.getPageNow())) {
-            return (PaginationVO<BookDTO>) redisUtils.get("library:book_" + vo.getPageNow());
+            Object obj = redisUtils.get("library:book_" + vo.getPageNow());
+            if (obj instanceof PaginationVO) {
+                PaginationVO<?> paginationVO = (PaginationVO<?>) obj;
+                // 安全地检查泛型类型
+                if (paginationVO.getData() != null && !paginationVO.getData().isEmpty()) {
+                    Object firstItem = paginationVO.getData().get(0);
+                    if (firstItem instanceof BookDTO) {
+                        @SuppressWarnings("unchecked")
+                        PaginationVO<BookDTO> result = (PaginationVO<BookDTO>) paginationVO;
+                        return result;
+                    }
+                }
+            }
         }
         // 创建分页对象，设置当前页和每页大小
         Page<Book> page = new Page<>(vo.getPageNow(), vo.getPageSize());
@@ -85,6 +98,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         paginationVO.setPageNow(bookPage.getCurrent());     // 设置当前页码
         paginationVO.setPageSize(bookPage.getSize());       // 设置每页大小
         paginationVO.setTotalPage(bookPage.getPages());     // 设置总页数
+        paginationVO.setData(new ArrayList<>());
 
         // 遍历查询结果，将每个Book实体转换为BookDTO并添加到分页VO的数据列表中
         bookPage.getRecords().forEach(book -> {

@@ -14,6 +14,7 @@ import com.kane.utils.BeanUtils;
 import com.kane.utils.JwtUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -58,13 +59,15 @@ public class BorrowRecordServiceImpl extends ServiceImpl<BorrowRecordMapper, Bor
      */
     @Override
     public void returnBook(Long recordId) {
-        BorrowRecord record = baseMapper.selectById(recordId);
+        LambdaQueryWrapper<BorrowRecord> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BorrowRecord::getRecordId, recordId);
+        BorrowRecord record = baseMapper.selectOne(queryWrapper);
         if (record != null) {
             // 设置实际归还时间为当前时间
             record.setReturnTime(new Date());
             // 设置状态为"已归还"
             record.setBorrowStatus(2);
-            baseMapper.updateById(record);
+            baseMapper.update(record, new LambdaQueryWrapper<BorrowRecord>().eq(BorrowRecord::getRecordId, recordId));
         }
     }
 
@@ -77,14 +80,16 @@ public class BorrowRecordServiceImpl extends ServiceImpl<BorrowRecordMapper, Bor
      */
     @Override
     public void renewBook(Long recordId, Integer days) {
-        BorrowRecord record = baseMapper.selectById(recordId);
+        LambdaQueryWrapper<BorrowRecord> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BorrowRecord::getRecordId, recordId);
+        BorrowRecord record = baseMapper.selectOne(queryWrapper);
         if (record != null && record.getBorrowStatus() == 1) {
             // 在应归还时间基础上延长
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(record.getDueTime());
             calendar.add(Calendar.DAY_OF_MONTH, days);
             record.setDueTime(calendar.getTime());
-            baseMapper.updateById(record);
+            baseMapper.update(record, new LambdaQueryWrapper<BorrowRecord>().eq(BorrowRecord::getRecordId, recordId));
         }
     }
 
@@ -96,7 +101,9 @@ public class BorrowRecordServiceImpl extends ServiceImpl<BorrowRecordMapper, Bor
      */
     @Override
     public BorrowRecordDTO getRecord(Long id) {
-        BorrowRecord record = baseMapper.selectById(id);
+        LambdaQueryWrapper<BorrowRecord> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BorrowRecord::getRecordId, id);
+        BorrowRecord record = baseMapper.selectOne(queryWrapper);
         return BeanUtils.copyProperties(record, BorrowRecordDTO.class);
     }
 
@@ -147,6 +154,8 @@ public class BorrowRecordServiceImpl extends ServiceImpl<BorrowRecordMapper, Bor
         paginationVO.setPageSize(recordPage.getSize());
         // 设置总页数
         paginationVO.setTotalPage(recordPage.getPages());
+
+        paginationVO.setData(new ArrayList<>());
         // 遍历查询结果，将每个借阅记录实体转换为DTO并添加到分页VO的数据列表中
         recordPage.getRecords().forEach(record -> {
             BorrowRecordDTO recordDTO = BeanUtils.copyProperties(record, BorrowRecordDTO.class);

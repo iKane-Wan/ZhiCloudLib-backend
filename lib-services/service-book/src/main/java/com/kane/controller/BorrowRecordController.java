@@ -77,7 +77,7 @@ public class BorrowRecordController {
     @Operation(summary = "分页查询借阅记录", description = "分页查询所有借阅记录列表")
     @GetMapping
     @Authorization(role = 1)
-    public R<PaginationVO<BorrowRecordDTO>> listRecord(@RequestBody PaginationDTO dto) {
+    public R<PaginationVO<BorrowRecordDTO>> listRecord(PaginationDTO dto) {
         PaginationVO<BorrowRecordDTO> result = borrowRecordService.listRecord(dto);
         return R.success(result);
     }

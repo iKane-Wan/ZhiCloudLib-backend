@@ -38,7 +38,7 @@ public class BookCategoryServiceImpl extends ServiceImpl<BookCategoryMapper, Boo
     @Override
     public void updateCategory(BookCategoryDTO dto) {
         BookCategory category = BeanUtils.copyProperties(dto, BookCategory.class);
-        baseMapper.updateById(category);
+        baseMapper.update(category, new LambdaQueryWrapper<BookCategory>().eq(BookCategory::getCategoryId, category.getCategoryId()));
     }
 
     /**
@@ -49,7 +49,9 @@ public class BookCategoryServiceImpl extends ServiceImpl<BookCategoryMapper, Boo
      */
     @Override
     public BookCategoryDTO getCategory(Long id) {
-        BookCategory category = baseMapper.selectById(id);
+        LambdaQueryWrapper<BookCategory> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BookCategory::getCategoryId, id);
+        BookCategory category = baseMapper.selectOne(queryWrapper);
         return BeanUtils.copyProperties(category, BookCategoryDTO.class);
     }
 

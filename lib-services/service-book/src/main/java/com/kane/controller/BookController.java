@@ -72,7 +72,7 @@ public class BookController {
      */
     @Operation(summary = "分页查询图书列表", description = "根据条件分页查询图书列表")
     @GetMapping
-    public R<PaginationVO<BookDTO>> listBook(@RequestBody PaginationDTO dto){
+    public R<PaginationVO<BookDTO>> listBook(PaginationDTO dto){
         PaginationVO<BookDTO> bookDTOPaginationVO = bookService.listBook(dto);
         return R.success(bookDTOPaginationVO);
     }

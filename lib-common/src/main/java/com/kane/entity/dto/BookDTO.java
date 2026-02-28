@@ -72,6 +72,13 @@ public class BookDTO {
      */
     @Schema(description = "图书定价")
     private BigDecimal price;
+
+    /**
+     * 图书简介
+     */
+    @Schema(description = "图书简介")
+    private String introduction;
+
     /**
      * 封面图片地址
      */
